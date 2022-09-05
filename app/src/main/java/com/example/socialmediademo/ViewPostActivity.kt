@@ -25,6 +25,8 @@ class ViewPostActivity : AppCompatActivity() {
 
     private lateinit var tvViewPostTitle: TextView
     private lateinit var tvViewPostText: TextView
+    private lateinit var tvViewPostComments: TextView
+    private lateinit var tvViewPostLikes: TextView
 
     private lateinit var comments: List<String>
 
@@ -36,7 +38,7 @@ class ViewPostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_view_post)
 
-        comments = listOf("THIS IS GLORIOUS!", "hello good buddy", "COMMENT!")
+        comments = listOf()
 
         rvViewPostComments = findViewById(R.id.rvViewPostComments)
         rvAdapter = CommentRVAdapter(comments)
@@ -52,6 +54,9 @@ class ViewPostActivity : AppCompatActivity() {
         tvViewPostTitle = findViewById(R.id.tvViewPostTitle)
         tvViewPostText = findViewById(R.id.tvViewPostText)
 
+        tvViewPostComments = findViewById(R.id.tvViewPostComments)
+        tvViewPostLikes = findViewById(R.id.tvViewPostLikes)
+
     }
 
     private fun getPost(postId: Int){
@@ -60,8 +65,6 @@ class ViewPostActivity : AppCompatActivity() {
                 val response = apiInterface!!.getPost(postId)
                 if(response.isSuccessful){
                     post = response.body()!!
-                    tvViewPostTitle.text = post.title
-                    tvViewPostText.text = post.text
                 }else{
                     Log.d("MAIN", "Unable to get data.")
                 }
@@ -69,8 +72,36 @@ class ViewPostActivity : AppCompatActivity() {
                 Log.d("MAIN", "Exception: $e")
             }
             withContext(Dispatchers.Main){
+                tvViewPostTitle.text = post.title
+                tvViewPostText.text = post.text
+                tvViewPostComments.text = "Comments: ${handleComments(post.comments)}"
+                tvViewPostLikes.text = "Likes: ${handleLikes(post.likes)}"
                 rvAdapter.update(comments)
             }
         }
+    }
+
+    private fun handleComments(commentsString: String): Int{
+        comments = commentsString.split(",")
+        var numberOfComments = 0
+        if (commentsString.isNotEmpty()){
+            numberOfComments = 1
+            comments = listOf(commentsString)
+        }
+        var newCommentsList = ArrayList<String>()
+        for(comment:String in comments){
+            numberOfComments++
+            newCommentsList.add(comment)
+        }
+        return numberOfComments
+    }
+
+    private fun handleLikes(likesString: String): Int{
+        val likes = likesString.split(",")
+        var numberOfLikes = if (likesString.isNotEmpty()){ 1 }else{ 0 }
+        for(like:String in likes){
+            numberOfLikes++
+        }
+        return numberOfLikes
     }
 }
