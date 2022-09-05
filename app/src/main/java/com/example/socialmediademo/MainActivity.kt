@@ -40,11 +40,12 @@ class MainActivity : AppCompatActivity() {
 
         btAddPost = findViewById(R.id.btAddPost)
         btAddPost.setOnClickListener {
-
+            val intent = Intent(this, AddPostActivity::class.java)
+            startActivity(intent)
         }
         btLogIn = findViewById(R.id.btLogIn)
         btLogIn.setOnClickListener {
-
+            getPosts()
         }
 
         getPosts()
