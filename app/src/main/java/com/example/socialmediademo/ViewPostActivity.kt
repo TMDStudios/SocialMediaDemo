@@ -83,15 +83,18 @@ class ViewPostActivity : AppCompatActivity() {
 
     private fun handleComments(commentsString: String): Int{
         comments = commentsString.split(",")
+        Log.d("MAIN", "size ${comments.size}")
         var numberOfComments = 0
-        if (commentsString.isNotEmpty()){
-            numberOfComments = 1
-            comments = listOf(commentsString)
-        }
-        var newCommentsList = ArrayList<String>()
+        val newCommentsList = ArrayList<String>()
         for(comment:String in comments){
+            Log.d("MAIN", "Adding $comment")
             numberOfComments++
             newCommentsList.add(comment)
+        }
+        comments = newCommentsList
+        if (numberOfComments==0 && commentsString.isNotEmpty()){
+            numberOfComments = 1
+            comments = listOf(commentsString)
         }
         return numberOfComments
     }

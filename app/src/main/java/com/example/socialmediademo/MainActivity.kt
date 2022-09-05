@@ -44,8 +44,10 @@ class MainActivity : AppCompatActivity() {
         }
         btLogIn = findViewById(R.id.btLogIn)
         btLogIn.setOnClickListener {
-            getPosts()
+
         }
+
+        getPosts()
     }
 
     private fun getPosts(){
