@@ -1,9 +1,11 @@
 package com.example.socialmediademo
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.socialmediademo.adapters.RVAdapter
@@ -32,15 +34,18 @@ class MainActivity : AppCompatActivity() {
 
         posts = listOf()
         rvMain = findViewById(R.id.rvMain)
-        rvAdapter = RVAdapter(posts)
+        rvAdapter = RVAdapter(this, posts)
         rvMain.adapter = rvAdapter
         rvMain.layoutManager = LinearLayoutManager(this)
 
         btAddPost = findViewById(R.id.btAddPost)
         btAddPost.setOnClickListener {
-            getPosts()
+
         }
         btLogIn = findViewById(R.id.btLogIn)
+        btLogIn.setOnClickListener {
+            getPosts()
+        }
     }
 
     private fun getPosts(){
@@ -60,5 +65,11 @@ class MainActivity : AppCompatActivity() {
                 rvAdapter.update(posts)
             }
         }
+    }
+
+    fun viewPost(postId: Int){
+        val intent = Intent(this, ViewPostActivity::class.java)
+        intent.putExtra("postId", postId)
+        startActivity(intent)
     }
 }

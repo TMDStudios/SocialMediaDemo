@@ -7,6 +7,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface APIInterface {
     @GET("users/")
@@ -17,6 +18,9 @@ interface APIInterface {
 
     @GET("posts/")
     suspend fun getAllPosts(): Response<List<Post>>
+
+    @GET("posts/{PostId}")
+    suspend fun getPost(@Path("PostId") PostId: Int): Response<Post>
 
     @POST("posts/")
     fun addPost(@Body postData: Post): Call<Post>
