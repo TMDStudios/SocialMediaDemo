@@ -71,6 +71,7 @@ class ViewPostActivity : AppCompatActivity() {
                     Log.d("MAIN", "Unable to get data.")
                 }
             }catch(e: Exception){
+                issue = true
                 Log.d("MAIN", "Exception: $e")
             }
             if(!issue){

@@ -18,6 +18,7 @@ class AddPostActivity : AppCompatActivity() {
     private lateinit var etTitle: EditText
     private lateinit var etText: EditText
     private lateinit var btAddPost: Button
+    private var username: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,13 +28,15 @@ class AddPostActivity : AppCompatActivity() {
         etText = findViewById(R.id.etAddPostText)
         btAddPost = findViewById(R.id.btAddPost)
         btAddPost.setOnClickListener {
-            if(etTitle.text.isNotEmpty() && etText.text.isNotEmpty()){
+            username = intent.getStringExtra("username")
+
+            if(etTitle.text.isNotEmpty() && etText.text.isNotEmpty() && username!=null){
                 val apiInterface = APIClient().getClient()?.create(APIInterface::class.java)
 
                 apiInterface?.addPost(
                     Post(
                         0,
-                        "Username",
+                        username!!,
                         etTitle.text.toString(),
                         "a",  // cannot be blank?
                         etText.text.toString(),

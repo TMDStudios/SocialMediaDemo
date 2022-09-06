@@ -13,7 +13,9 @@ import com.example.socialmediademo.adapters.RVAdapter
 import com.example.socialmediademo.api.APIClient
 import com.example.socialmediademo.api.APIInterface
 import com.example.socialmediademo.models.Post
+import com.example.socialmediademo.models.User
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
@@ -30,6 +32,8 @@ class MainActivity : AppCompatActivity() {
     private val apiInterface by lazy { APIClient().getClient()?.create(APIInterface::class.java) }
 
     private var apiKey: String? = null
+    private var username: String? = null
+    private var user: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,9 +49,8 @@ class MainActivity : AppCompatActivity() {
         btAddPost.setOnClickListener {
             apiKey = intent.getStringExtra("apiKey").toString()
             Log.d("MAIN", "Key: $apiKey")
-            if(apiKey!=null){
-                val intent = Intent(this, AddPostActivity::class.java)
-                startActivity(intent)
+            if(apiKey!!.length==64){
+                getUserData(apiKey!!)
             }else{
                 Toast.makeText(this, "You must be logged in to add posts", Toast.LENGTH_LONG).show()
             }
@@ -84,4 +87,33 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("postId", postId)
         startActivity(intent)
     }
+
+    private fun getUserData(userApiKey: String){
+        var issue = false
+        CoroutineScope(IO).launch {
+            try{
+                val response = apiInterface!!.getUser(userApiKey)
+                if(response.isSuccessful){
+                    user = response.body()!!
+                    if(user!=null){username = user!!.username}
+                }else{
+                    issue = true
+                    Log.d("MAIN", "Unable to get data.")
+                }
+            }catch(e: Exception){
+                issue = true
+                Log.d("MAIN", "Exception: $e")
+            }
+            withContext(Main){
+                if(issue){
+                    Toast.makeText(this@MainActivity, "Unable to retrieve user information", Toast.LENGTH_LONG).show()
+                }else{
+                    val intent = Intent(this@MainActivity, AddPostActivity::class.java)
+                    intent.putExtra("username", username)
+                    startActivity(intent)
+                }
+            }
+        }
+    }
+
 }

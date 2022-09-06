@@ -25,7 +25,7 @@ interface APIInterface {
     @GET("posts/")
     suspend fun getAllPosts(): Response<List<Post>>
 
-    @GET("posts/{PostId}")
+    @GET("posts/{postId}")
     suspend fun getPost(@Path("postId") postId: Int): Response<Post>
 
     @POST("posts/")
