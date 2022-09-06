@@ -12,6 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.socialmediademo.api.APIClient
 import com.example.socialmediademo.api.APIInterface
 import com.example.socialmediademo.models.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,6 +32,8 @@ class LoginRegisterActivity : AppCompatActivity() {
     private lateinit var etRegAbout: EditText
     private lateinit var btRegRegister: Button
 
+    private var userApiKey = ""
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +45,27 @@ class LoginRegisterActivity : AppCompatActivity() {
         etLogInPassword = findViewById(R.id.etLogInPassword)
         btLogInLogin = findViewById(R.id.btLogInLogin)
         btLogInLogin.setOnClickListener {
-
+            var issue = false
+            CoroutineScope(Dispatchers.IO).launch {
+                try{
+                    val response = apiInterface!!.logIn(etLogInUsername.text.toString(), etLogInPassword.text.toString())
+                    if(response.isSuccessful){
+                        userApiKey = response.body()!!
+                    }else{
+                        issue = true
+                        Log.d("MAIN", "Unable to get data.")
+                    }
+                }catch(e: Exception){
+                    Log.d("MAIN", "Exception: $e")
+                }
+                withContext(Dispatchers.Main){
+                    if(!issue){
+                        Toast.makeText(this@LoginRegisterActivity, "Api Key: $userApiKey", Toast.LENGTH_LONG).show()
+                    }else{
+                        Toast.makeText(this@LoginRegisterActivity, "Unable to log in. Please check Username and Password", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
         }
 
         etRegEmail = findViewById(R.id.etRegEmail)

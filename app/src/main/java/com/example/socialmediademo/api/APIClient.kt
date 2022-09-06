@@ -1,5 +1,6 @@
 package com.example.socialmediademo.api
 
+import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -9,15 +10,17 @@ class APIClient {
     private var retrofit: Retrofit? = null
 
     fun getClient(): Retrofit? {
-        var loggingInterceptor = HttpLoggingInterceptor()
+        val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        var okHttpClient = OkHttpClient.Builder()
+        val okHttpClient = OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .build()
 
+        val gsonBuilder = GsonBuilder().setLenient().create()
+
         retrofit = Retrofit.Builder()
             .baseUrl("https://apidojo.pythonanywhere.com/")
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gsonBuilder))
             .client(okHttpClient)
             .build()
         return retrofit

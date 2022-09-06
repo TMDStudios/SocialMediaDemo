@@ -16,11 +16,17 @@ interface APIInterface {
     @POST("users/")
     fun addUser(@Body userData: User): Call<User>
 
+    @GET("login/{username}/{password}")
+    suspend fun logIn(@Path("username") username: String, @Path("password") password: String): Response<String>
+
+    @GET("users/{apiKey}")
+    suspend fun getUser(@Path("apiKey") apiKey: String): Response<User>
+
     @GET("posts/")
     suspend fun getAllPosts(): Response<List<Post>>
 
     @GET("posts/{PostId}")
-    suspend fun getPost(@Path("PostId") PostId: Int): Response<Post>
+    suspend fun getPost(@Path("postId") postId: Int): Response<Post>
 
     @POST("posts/")
     fun addPost(@Body postData: Post): Call<Post>
