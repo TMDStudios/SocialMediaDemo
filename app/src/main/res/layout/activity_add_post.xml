@@ -16,12 +16,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/etAddPostTitle"
-            android:text="Title"/>
+            android:hint="Title"/>
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/etAddPostText"
-            android:text="Text"/>
+            android:hint="Text"/>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <Button

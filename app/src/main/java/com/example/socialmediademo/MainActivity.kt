@@ -45,7 +45,8 @@ class MainActivity : AppCompatActivity() {
         }
         btLogIn = findViewById(R.id.btLogIn)
         btLogIn.setOnClickListener {
-            getPosts()
+            val intent = Intent(this, LoginRegisterActivity::class.java)
+            startActivity(intent)
         }
 
         getPosts()
