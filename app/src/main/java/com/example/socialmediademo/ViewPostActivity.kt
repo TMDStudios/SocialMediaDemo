@@ -60,23 +60,27 @@ class ViewPostActivity : AppCompatActivity() {
     }
 
     private fun getPost(postId: Int){
+        var issue = false
         CoroutineScope(Dispatchers.IO).launch {
             try{
                 val response = apiInterface!!.getPost(postId)
                 if(response.isSuccessful){
                     post = response.body()!!
                 }else{
+                    issue = true
                     Log.d("MAIN", "Unable to get data.")
                 }
             }catch(e: Exception){
                 Log.d("MAIN", "Exception: $e")
             }
-            withContext(Dispatchers.Main){
-                tvViewPostTitle.text = post.title
-                tvViewPostText.text = post.text
-                tvViewPostComments.text = "Comments: ${handleComments(post.comments)}"
-                tvViewPostLikes.text = "Likes: ${handleLikes(post.likes)}"
-                rvAdapter.update(comments)
+            if(!issue){
+                withContext(Dispatchers.Main){
+                    tvViewPostTitle.text = post.title
+                    tvViewPostText.text = post.text
+                    tvViewPostComments.text = "Comments: ${handleComments(post.comments)}"
+                    tvViewPostLikes.text = "Likes: ${handleLikes(post.likes)}"
+                    rvAdapter.update(comments)
+                }
             }
         }
     }
@@ -99,10 +103,11 @@ class ViewPostActivity : AppCompatActivity() {
 
     private fun handleLikes(likesString: String): Int{
         val likes = likesString.split(",")
-        var numberOfLikes = if (likesString.isNotEmpty()){ 1 }else{ 0 }
+        var numberOfLikes = 0
         for(like:String in likes){
             numberOfLikes++
         }
+        if (numberOfLikes==0 && likesString.isNotEmpty()){ numberOfLikes = 1 }
         return numberOfLikes
     }
 }

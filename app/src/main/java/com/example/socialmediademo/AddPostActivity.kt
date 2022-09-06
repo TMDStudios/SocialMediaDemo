@@ -33,11 +33,11 @@ class AddPostActivity : AppCompatActivity() {
                 apiInterface?.addPost(
                     Post(
                         0,
-                        "Mitch",
+                        "Username",
                         etTitle.text.toString(),
-                        "",
+                        "a",  // cannot be blank?
                         etText.text.toString(),
-                        "",
+                        "a", // cannot be blank?
                     )
                 )!!.enqueue(object: Callback<Post> {
                     override fun onResponse(call: Call<Post>, response: Response<Post>) {

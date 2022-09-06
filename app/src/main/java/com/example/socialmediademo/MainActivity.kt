@@ -56,7 +56,6 @@ class MainActivity : AppCompatActivity() {
             try{
                 val response = apiInterface!!.getAllPosts()
                 if(response.isSuccessful){
-                    Log.d("MAIN", "RESPONSE ${response.body()}")
                     posts = response.body()!!
                 }else{
                     Log.d("MAIN", "Unable to get data.")
