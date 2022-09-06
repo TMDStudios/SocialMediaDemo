@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity() {
 
     private val apiInterface by lazy { APIClient().getClient()?.create(APIInterface::class.java) }
 
+    private var apiKey: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,8 +43,14 @@ class MainActivity : AppCompatActivity() {
 
         btAddPost = findViewById(R.id.btAddPost)
         btAddPost.setOnClickListener {
-            val intent = Intent(this, AddPostActivity::class.java)
-            startActivity(intent)
+            apiKey = intent.getStringExtra("apiKey").toString()
+            Log.d("MAIN", "Key: $apiKey")
+            if(apiKey!=null){
+                val intent = Intent(this, AddPostActivity::class.java)
+                startActivity(intent)
+            }else{
+                Toast.makeText(this, "You must be logged in to add posts", Toast.LENGTH_LONG).show()
+            }
         }
         btLogIn = findViewById(R.id.btLogIn)
         btLogIn.setOnClickListener {

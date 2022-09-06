@@ -56,11 +56,15 @@ class LoginRegisterActivity : AppCompatActivity() {
                         Log.d("MAIN", "Unable to get data.")
                     }
                 }catch(e: Exception){
+                    issue = true
                     Log.d("MAIN", "Exception: $e")
                 }
                 withContext(Dispatchers.Main){
                     if(!issue){
-                        Toast.makeText(this@LoginRegisterActivity, "Api Key: $userApiKey", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@LoginRegisterActivity, "Logged in successfully", Toast.LENGTH_LONG).show()
+                        val intent = Intent(this@LoginRegisterActivity, MainActivity::class.java)
+                        intent.putExtra("apiKey", userApiKey)
+                        startActivity(intent)
                     }else{
                         Toast.makeText(this@LoginRegisterActivity, "Unable to log in. Please check Username and Password", Toast.LENGTH_LONG).show()
                     }
