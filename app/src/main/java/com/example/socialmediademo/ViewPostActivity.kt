@@ -68,11 +68,15 @@ class ViewPostActivity : AppCompatActivity() {
                 if(post.likes.contains(username!!)){
                     Toast.makeText(this, "You have already liked this post", Toast.LENGTH_LONG).show()
                 }else{
+                    var like = username
+                    if(post.likes.isNotEmpty()){
+                        like = post.likes+", $username"
+                    }
                     updatePost(Post(
                         post.id,
                         username!!,
                         post.title,
-                        post.likes+", $username",  // cannot be blank?
+                        like!!,  // cannot be blank?
                         post.text,
                         post.comments, // cannot be blank?
                     ), true)
