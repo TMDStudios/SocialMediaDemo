@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,6 +34,7 @@ class ViewPostActivity : AppCompatActivity() {
     private lateinit var tvViewPostText: TextView
     private lateinit var tvViewPostComments: TextView
     private lateinit var tvViewPostLikes: TextView
+    private lateinit var etViewPostComment: EditText
 
     private lateinit var comments: List<String>
 
@@ -58,37 +60,50 @@ class ViewPostActivity : AppCompatActivity() {
         rvViewPostComments.adapter = rvAdapter
         rvViewPostComments.layoutManager = LinearLayoutManager(this)
 
+        etViewPostComment = findViewById(R.id.etViewPostComment)
+
         btLike = findViewById(R.id.btLike)
         btLike.setOnClickListener {
             if(username!=null){
                 if(post.likes.contains(username!!)){
                     Toast.makeText(this, "You have already liked this post", Toast.LENGTH_LONG).show()
                 }else{
-                    apiInterface?.updatePost(
+                    updatePost(Post(
                         post.id,
-                        Post(
-                            0,
-                            username!!,
-                            post.title,
-                            post.likes+", $username",  // cannot be blank?
-                            post.text,
-                            post.comments, // cannot be blank?
-                        )
-                    )!!.enqueue(object: Callback<Post> {
-                        override fun onResponse(call: Call<Post>, response: Response<Post>) {
-                            Log.d("MAIN", "Response: $response")
-                        }
-                        override fun onFailure(call: Call<Post>, t: Throwable) {
-                            Toast.makeText(this@ViewPostActivity, "Something went wrong", Toast.LENGTH_LONG).show()
-                        }
-                    })
-                    Toast.makeText(this, "Post liked", Toast.LENGTH_LONG).show()
+                        username!!,
+                        post.title,
+                        post.likes+", $username",  // cannot be blank?
+                        post.text,
+                        post.comments, // cannot be blank?
+                    ), true)
                 }
             }else{
                 Toast.makeText(this, "You must be logged in to like posts", Toast.LENGTH_LONG).show()
             }
         }
         btCommentSubmit = findViewById(R.id.btLeaveComment)
+        btCommentSubmit.setOnClickListener {
+            if(username!=null){
+                var comment = etViewPostComment.text.toString()
+                if(post.comments.isNotEmpty()){
+                    comment = post.comments + ", ${etViewPostComment.text}"
+                }
+                if(etViewPostComment.text.isNotEmpty()){
+                    updatePost(Post(
+                        post.id,
+                        username!!,
+                        post.title,
+                        post.likes,  // cannot be blank?
+                        post.text,
+                        comment, // cannot be blank?
+                    ), false)
+                }else{
+                    Toast.makeText(this, "The comment field must not be empty", Toast.LENGTH_LONG).show()
+                }
+            }else{
+                Toast.makeText(this, "You must be logged in to like posts", Toast.LENGTH_LONG).show()
+            }
+        }
 
         postId = intent.getIntExtra("postId", 1)
         getPost(postId)
@@ -144,5 +159,25 @@ class ViewPostActivity : AppCompatActivity() {
     private fun handleLikes(likesString: String): Int{
         if(likesString.isNotEmpty()){return likesString.split(",").size}
         return 0
+    }
+
+    private fun updatePost(post: Post, like: Boolean){
+        apiInterface?.updatePost(
+            post.id,
+            post
+        )!!.enqueue(object: Callback<Post> {
+            override fun onResponse(call: Call<Post>, response: Response<Post>) {
+                Log.d("MAIN", "Response: $response")
+            }
+            override fun onFailure(call: Call<Post>, t: Throwable) {
+                Toast.makeText(this@ViewPostActivity, "Something went wrong", Toast.LENGTH_LONG).show()
+            }
+        })
+        if(like){
+            Toast.makeText(this, "Post liked", Toast.LENGTH_LONG).show()
+        }else{
+            etViewPostComment.text.clear()
+            Toast.makeText(this, "Comment added", Toast.LENGTH_LONG).show()
+        }
     }
 }

@@ -110,7 +110,7 @@
             android:layout_margin="8dp"
             android:layout_weight="1"
             android:id="@+id/etViewPostComment"
-            android:text="Comment"/>
+            android:hint="Comment"/>
 
         <Button
             android:layout_width="match_parent"
