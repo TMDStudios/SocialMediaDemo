@@ -1,10 +1,13 @@
 package com.example.socialmediademo
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.socialmediademo.adapters.CommentRVAdapter
@@ -15,6 +18,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ViewPostActivity : AppCompatActivity() {
     private lateinit var rvViewPostComments: RecyclerView
@@ -30,6 +36,8 @@ class ViewPostActivity : AppCompatActivity() {
 
     private lateinit var comments: List<String>
 
+    private var username: String? = null
+
     private var postId = 0
     private lateinit var post: Post
     private val apiInterface by lazy { APIClient().getClient()?.create(APIInterface::class.java) }
@@ -40,12 +48,46 @@ class ViewPostActivity : AppCompatActivity() {
 
         comments = listOf()
 
+        val sharedPreferences = this.getSharedPreferences(
+            getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+        username = sharedPreferences.getString("username", null)
+        Log.d("MAIN", "user: $username")
+
         rvViewPostComments = findViewById(R.id.rvViewPostComments)
         rvAdapter = CommentRVAdapter(comments)
         rvViewPostComments.adapter = rvAdapter
         rvViewPostComments.layoutManager = LinearLayoutManager(this)
 
         btLike = findViewById(R.id.btLike)
+        btLike.setOnClickListener {
+            if(username!=null){
+                if(post.likes.contains(username!!)){
+                    Toast.makeText(this, "You have already liked this post", Toast.LENGTH_LONG).show()
+                }else{
+                    apiInterface?.updatePost(
+                        post.id,
+                        Post(
+                            0,
+                            username!!,
+                            post.title,
+                            post.likes+", $username",  // cannot be blank?
+                            post.text,
+                            post.comments, // cannot be blank?
+                        )
+                    )!!.enqueue(object: Callback<Post> {
+                        override fun onResponse(call: Call<Post>, response: Response<Post>) {
+                            Log.d("MAIN", "Response: $response")
+                        }
+                        override fun onFailure(call: Call<Post>, t: Throwable) {
+                            Toast.makeText(this@ViewPostActivity, "Something went wrong", Toast.LENGTH_LONG).show()
+                        }
+                    })
+                    Toast.makeText(this, "Post liked", Toast.LENGTH_LONG).show()
+                }
+            }else{
+                Toast.makeText(this, "You must be logged in to like posts", Toast.LENGTH_LONG).show()
+            }
+        }
         btCommentSubmit = findViewById(R.id.btLeaveComment)
 
         postId = intent.getIntExtra("postId", 1)

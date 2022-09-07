@@ -28,6 +28,9 @@ class AddPostActivity : AppCompatActivity() {
         etText = findViewById(R.id.etAddPostText)
         btAddPost = findViewById(R.id.btAddPost)
         btAddPost.setOnClickListener {
+//            val sharedPreferences = this.getSharedPreferences(
+//                getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+//            username = sharedPreferences.getString("username", null)
             username = intent.getStringExtra("username")
 
             if(etTitle.text.isNotEmpty() && etText.text.isNotEmpty() && username!=null){

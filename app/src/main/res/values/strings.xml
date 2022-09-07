@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SocialMediaDemo</string>
+    <string name="preference_file_key">com.example.socialmediademo.PREFERENCE_FILE_KEY</string>
 </resources>

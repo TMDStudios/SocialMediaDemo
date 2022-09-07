@@ -1,5 +1,6 @@
 package com.example.socialmediademo
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -62,8 +63,13 @@ class LoginRegisterActivity : AppCompatActivity() {
                 withContext(Dispatchers.Main){
                     if(!issue){
                         Toast.makeText(this@LoginRegisterActivity, "Logged in successfully", Toast.LENGTH_LONG).show()
+                        val sharedPreferences = this@LoginRegisterActivity.getSharedPreferences(
+                            getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+                        with(sharedPreferences.edit()) {
+                            putString("apiKey", userApiKey)
+                            apply()
+                        }
                         val intent = Intent(this@LoginRegisterActivity, MainActivity::class.java)
-                        intent.putExtra("apiKey", userApiKey)
                         startActivity(intent)
                     }else{
                         Toast.makeText(this@LoginRegisterActivity, "Unable to log in. Please check Username and Password", Toast.LENGTH_LONG).show()
@@ -103,6 +109,10 @@ class LoginRegisterActivity : AppCompatActivity() {
                     }
                 })
             }else{
+                // clear shared preferences
+//                val sharedPreferences = this.getSharedPreferences(
+//                    getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+//                sharedPreferences.edit().clear().apply()
                 Toast.makeText(this@LoginRegisterActivity, "Email, Username, and Password are required", Toast.LENGTH_LONG).show()
             }
         }

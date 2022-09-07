@@ -1,6 +1,8 @@
 package com.example.socialmediademo
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -35,9 +37,16 @@ class MainActivity : AppCompatActivity() {
     private var username: String? = null
     private var user: User? = null
 
+    private lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        sharedPreferences = this.getSharedPreferences(
+            getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+
+        apiKey = sharedPreferences.getString("apiKey", "")
 
         posts = listOf()
         rvMain = findViewById(R.id.rvMain)
@@ -47,7 +56,6 @@ class MainActivity : AppCompatActivity() {
 
         btAddPost = findViewById(R.id.btAddPost)
         btAddPost.setOnClickListener {
-            apiKey = intent.getStringExtra("apiKey").toString()
             Log.d("MAIN", "Key: $apiKey")
             if(apiKey!!.length==64){
                 getUserData(apiKey!!)
@@ -95,7 +103,13 @@ class MainActivity : AppCompatActivity() {
                 val response = apiInterface!!.getUser(userApiKey)
                 if(response.isSuccessful){
                     user = response.body()!!
-                    if(user!=null){username = user!!.username}
+                    if(user!=null){
+                        username = user!!.username
+                        with(sharedPreferences.edit()) {
+                            putString("username", username!!)
+                            apply()
+                        }
+                    }
                 }else{
                     issue = true
                     Log.d("MAIN", "Unable to get data.")

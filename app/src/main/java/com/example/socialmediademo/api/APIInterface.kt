@@ -4,10 +4,7 @@ import com.example.socialmediademo.models.Post
 import com.example.socialmediademo.models.User
 import retrofit2.Call
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 interface APIInterface {
     @GET("users/")
@@ -30,4 +27,7 @@ interface APIInterface {
 
     @POST("posts/")
     fun addPost(@Body postData: Post): Call<Post>
+
+    @PUT("posts/{postId}")
+    fun updatePost(@Path("postId") postId: Int, @Body postData: Post): Call<Post>
 }
