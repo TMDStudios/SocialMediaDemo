@@ -19,6 +19,12 @@ class RVAdapter(val activity: MainActivity, private var posts: List<Post>): Recy
 
         holder.binding.apply {
             tvPostTitle.text = post.title
+            if(post.comments.isNotEmpty()){
+                tvComments.text = "${post.comments.split(",").size} Comment(s)"
+            }
+            if(post.likes.isNotEmpty()){
+                tvLikes.text = "${post.likes.split(",").size} Likes"
+            }
             tvOpenThread.setOnClickListener {
                 activity.viewPost(post.id)
             }

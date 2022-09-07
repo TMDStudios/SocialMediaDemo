@@ -87,28 +87,20 @@ class ViewPostActivity : AppCompatActivity() {
     }
 
     private fun handleComments(commentsString: String): Int{
-        comments = commentsString.split(",")
-        var numberOfComments = 0
-        val newCommentsList = ArrayList<String>()
-        for(comment:String in comments){
-            numberOfComments++
-            newCommentsList.add(comment)
+        if(commentsString.isNotEmpty()){
+            comments = commentsString.split(",")
+            val newCommentsList = ArrayList<String>()
+            for(comment:String in comments){
+                newCommentsList.add(comment)
+            }
+            comments = newCommentsList
+            return commentsString.split(",").size
         }
-        comments = newCommentsList
-        if (numberOfComments==0 && commentsString.isNotEmpty()){
-            numberOfComments = 1
-            comments = listOf(commentsString)
-        }
-        return numberOfComments
+        return 0
     }
 
     private fun handleLikes(likesString: String): Int{
-        val likes = likesString.split(",")
-        var numberOfLikes = 0
-        for(like:String in likes){
-            numberOfLikes++
-        }
-        if (numberOfLikes==0 && likesString.isNotEmpty()){ numberOfLikes = 1 }
-        return numberOfLikes
+        if(likesString.isNotEmpty()){return likesString.split(",").size}
+        return 0
     }
 }
