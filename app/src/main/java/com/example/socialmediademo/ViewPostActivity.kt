@@ -1,7 +1,6 @@
 package com.example.socialmediademo
 
 import android.content.Context
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -76,9 +75,9 @@ class ViewPostActivity : AppCompatActivity() {
                         post.id,
                         username!!,
                         post.title,
-                        like!!,  // cannot be blank?
+                        like!!,
                         post.text,
-                        post.comments, // cannot be blank?
+                        post.comments,
                     ), true)
                 }
             }else{
@@ -97,9 +96,9 @@ class ViewPostActivity : AppCompatActivity() {
                         post.id,
                         username!!,
                         post.title,
-                        post.likes,  // cannot be blank?
+                        post.likes,
                         post.text,
-                        comment, // cannot be blank?
+                        comment,
                     ), false)
                 }else{
                     Toast.makeText(this, "The comment field must not be empty", Toast.LENGTH_LONG).show()
@@ -183,5 +182,6 @@ class ViewPostActivity : AppCompatActivity() {
             etViewPostComment.text.clear()
             Toast.makeText(this, "Comment added", Toast.LENGTH_LONG).show()
         }
+        getPost(post.id)
     }
 }
